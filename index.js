@@ -1,6 +1,7 @@
 const graph = document.querySelector('#graph');
 const wall = document.querySelector('#wall');
-const startBtn = document.querySelector('#start');
+const dfsBtn = document.querySelector('#dfs');
+const bfsBtn = document.querySelector('#bfs');
 let nodes = [];
 let visited = [];
 let n = 20;
@@ -25,8 +26,12 @@ wall.addEventListener('click', function() {
     }));
 });
 
-startBtn.addEventListener('click', function() {
+dfsBtn.addEventListener('click', function() {
     dfs(start);
+});
+
+bfsBtn.addEventListener('click', function() {
+    bfs(start);
 });
 
 for(let i = 0; i < n; i++) {
@@ -70,8 +75,6 @@ function dfs(node) {
         node.style.backgroundColor = 'blue';
     }
 
-    console.log()
-
     visited[i][j] = 1;
 
     //visit top [i-1][j]
@@ -89,6 +92,70 @@ function dfs(node) {
     //visit left [i][j-1]
     if(!found && j-1 >= 0 && nodes[i][j-1].style.backgroundColor != 'black') {
         dfs(nodes[i][j-1]);
+    }
+}
+
+function bfs(node) {
+    let Q = [node];
+    let prev = [];
+
+    for(let i = 0; i < n*n; i++) {
+        prev.push(null);
+    }
+
+    while(Q.length > 0) {
+        let curr = Q.shift();
+        let i = Number(curr.getAttribute('i'));
+        let j = Number(curr.getAttribute('j'));
+
+        if(curr === end) {
+            break;
+        }
+
+        if(curr !== start) {
+            curr.style.backgroundColor = 'blue';
+        }
+
+        visited[i][j] = 1;
+
+        //visit top [i-1][j]
+        if(i-1 >= 0 && nodes[i-1][j].style.backgroundColor != 'black' && visited[i-1][j] === 0) {
+            Q.push(nodes[i-1][j]);
+            prev[(i-1)*n + j] = curr;
+            visited[i-1][j] = 1;
+        }
+        //visit right [i][j+1]
+        if(j+1 < n && nodes[i][j+1].style.backgroundColor != 'black' && visited[i][j+1] === 0) {
+            Q.push(nodes[i][j+1]);
+            prev[i*n + j+1] = curr;
+            visited[i][j+1] = 1;
+        }
+        //visit bottom [i+1][j]
+        if(i+1 < n && nodes[i+1][j].style.backgroundColor != 'black' && visited[i+1][j] === 0) {
+            Q.push(nodes[i+1][j]);
+            prev[(i+1)*n + j] = curr;
+            visited[i+1][j] = 1;
+        }
+        //visit left [i][j-1]
+        if(j-1 >= 0 && nodes[i][j-1].style.backgroundColor != 'black' && visited[i][j-1] === 0) {
+            Q.push(nodes[i][j-1]);
+            prev[i*n + j-1] = curr;
+            visited[i][j+1] = 1;
+        }
+    }
+
+    let i = Number(end.getAttribute('i'));
+    let j = Number(end.getAttribute('j'));
+    let curr = prev[i*n + j];
+    while(curr !== null) {
+        i = Number(curr.getAttribute('i'));
+        j = Number(curr.getAttribute('j'));
+
+        if(curr !== start) {
+            curr.style.backgroundColor = 'red';
+        }
+
+        curr = prev[i*n + j];
     }
 }
 
