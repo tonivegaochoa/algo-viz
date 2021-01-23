@@ -44,6 +44,9 @@ for(let i = 0; i < n; i++) {
         node.setAttribute('j', j);
         graph.appendChild(node);
         node.addEventListener('click', select);
+        node.addEventListener('click', function() {
+            console.log(this);
+        });
         row.push(node);
         rowV.push(0);
     }
@@ -98,6 +101,7 @@ function dfs(node) {
 function bfs(node) {
     let Q = [node];
     let prev = [];
+    let delay = 0;
 
     for(let i = 0; i < n*n; i++) {
         prev.push(null);
@@ -113,7 +117,8 @@ function bfs(node) {
         }
 
         if(curr !== start) {
-            curr.style.backgroundColor = 'blue';
+            curr.style.cssText = `animation-name: search; animation-delay: ${delay}ms;`;
+            delay += 25;
         }
 
         visited[i][j] = 1;
@@ -144,19 +149,27 @@ function bfs(node) {
         }
     }
 
-    let i = Number(end.getAttribute('i'));
-    let j = Number(end.getAttribute('j'));
-    let curr = prev[i*n + j];
-    while(curr !== null) {
-        i = Number(curr.getAttribute('i'));
-        j = Number(curr.getAttribute('j'));
+    setTimeout(() => {
+        let i = Number(end.getAttribute('i'));
+        let j = Number(end.getAttribute('j'));
+        let curr = prev[i*n + j];
+        let path = [end];
 
-        if(curr !== start) {
-            curr.style.backgroundColor = 'red';
+        delay = 50;
+        while(curr !== null) {
+            path.push(curr);
+            i = Number(curr.getAttribute('i'));
+            j = Number(curr.getAttribute('j'));
+            curr = prev[i*n + j];
         }
 
-        curr = prev[i*n + j];
-    }
+        path = path.reverse();
+        path.forEach(node => {
+            node.classList.add('path');
+            node.style.cssText = `background-color: rgb(0, 217, 255); animation-name: path; animation-delay: ${delay}ms;`;
+            delay += 50;
+        });
+    }, delay);
 }
 
 
