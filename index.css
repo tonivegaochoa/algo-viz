@@ -29,7 +29,7 @@ body {
     border: 1px solid grey;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
-    animation-duration: 1s;
+    animation-duration: .5s;
 }
 
 @keyframes search {

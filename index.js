@@ -9,6 +9,7 @@ let start = null;
 let end = null;
 let isDrawing = false;
 let found = false;
+let delayD = 0;
 
 wall.addEventListener('click', function() {
     nodes.forEach(row => row.forEach(node => {
@@ -27,7 +28,35 @@ wall.addEventListener('click', function() {
 });
 
 dfsBtn.addEventListener('click', function() {
-    dfs(start);
+    let prev = [];
+
+    for(let i = 0; i < n*n; i++) {
+        prev.push(null);
+    }
+
+    dfs(start, prev, null);
+
+    setTimeout(() => {
+        let i = Number(end.getAttribute('i'));
+        let j = Number(end.getAttribute('j'));
+        let curr = prev[i*n + j];
+        let path = [end];
+
+        delay = 50;
+        while(curr !== null) {
+            path.push(curr);
+            i = Number(curr.getAttribute('i'));
+            j = Number(curr.getAttribute('j'));
+            curr = prev[i*n + j];
+        }
+
+        path = path.reverse();
+        path.forEach(node => {
+            node.classList.add('path');
+            node.style.cssText = `background-color: rgb(0, 217, 255); animation-name: path; animation-delay: ${delay}ms;`;
+            delay += 50;
+        });
+    }, delayD);
 });
 
 bfsBtn.addEventListener('click', function() {
@@ -64,37 +93,41 @@ function select(e) {
     }
 }
 
-function dfs(node) {
+function dfs(node, prev, prevNode) {
     let i = Number(node.getAttribute('i'));
     let j = Number(node.getAttribute('j'));
 
     if(visited[i][j] === 1) return;
+
+    prev[i*n + j] = prevNode;
+
     if(node === end) {
         found = true;
         return;
     }
 
     if(node !== start) {
-        node.style.backgroundColor = 'blue';
+        node.style.cssText = `animation-name: search; animation-delay: ${delayD}ms;`;
+        delayD += 25;
     }
 
     visited[i][j] = 1;
 
     //visit top [i-1][j]
     if(!found && i-1 >= 0 && nodes[i-1][j].style.backgroundColor != 'black') {
-        dfs(nodes[i-1][j]);
+        dfs(nodes[i-1][j], prev, node);
     }
     //visit right [i][j+1]
     if(!found && j+1 < n && nodes[i][j+1].style.backgroundColor != 'black') {
-        dfs(nodes[i][j+1]);
+        dfs(nodes[i][j+1], prev, node);
     }
     //visit bottom [i+1][j]
     if(!found && i+1 < n && nodes[i+1][j].style.backgroundColor != 'black') {
-        dfs(nodes[i+1][j]);
+        dfs(nodes[i+1][j], prev, node);
     }
     //visit left [i][j-1]
     if(!found && j-1 >= 0 && nodes[i][j-1].style.backgroundColor != 'black') {
-        dfs(nodes[i][j-1]);
+        dfs(nodes[i][j-1], prev, node);
     }
 }
 
@@ -102,13 +135,14 @@ function bfs(node) {
     let Q = [node];
     let prev = [];
     let delay = 0;
+    let ptr = 0;
 
     for(let i = 0; i < n*n; i++) {
         prev.push(null);
     }
 
-    while(Q.length > 0) {
-        let curr = Q.shift();
+    while(ptr !== Q.length) {
+        let curr = Q[ptr++];
         let i = Number(curr.getAttribute('i'));
         let j = Number(curr.getAttribute('j'));
 
@@ -118,7 +152,7 @@ function bfs(node) {
 
         if(curr !== start) {
             curr.style.cssText = `animation-name: search; animation-delay: ${delay}ms;`;
-            delay += 25;
+            delay += 5;
         }
 
         visited[i][j] = 1;
@@ -169,7 +203,7 @@ function bfs(node) {
             node.style.cssText = `background-color: rgb(0, 217, 255); animation-name: path; animation-delay: ${delay}ms;`;
             delay += 50;
         });
-    }, delay);
+    }, delay+500);
 }
 
 
