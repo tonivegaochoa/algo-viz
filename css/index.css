@@ -17,19 +17,28 @@ body {
 
 #graph {
     display: grid;
-    grid-template-columns: repeat(20, 1fr);
-    grid-template-rows: repeat(20, 1fr);
-    width: 500px;
-    height: 500px;
-    border: 1px solid black;
+    grid-template-columns: repeat(62, 1fr);
+    grid-template-rows: repeat(31, 1fr);
+    width: 98%;
+    height: 90%;
+    border: 1px solid rgba(0, 152, 172, 0.425);
 }
 
 .node {
+    z-index: 0;
     height: 100%;
-    border: 1px solid grey;
+    border: 1px solid rgba(0, 152, 172, 0.425);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
     animation-duration: .5s;
+}
+
+img {
+    height: 100%;
+    width: 100%;
 }
 
 @keyframes search {

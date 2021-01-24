@@ -1,210 +1,59 @@
 const graph = document.querySelector('#graph');
-const wall = document.querySelector('#wall');
-const dfsBtn = document.querySelector('#dfs');
-const bfsBtn = document.querySelector('#bfs');
+const rows = 31;
+const cols = 62;
+
 let nodes = [];
 let visited = [];
-let n = 20;
-let start = null;
-let end = null;
-let isDrawing = false;
-let found = false;
-let delayD = 0;
 
-wall.addEventListener('click', function() {
-    nodes.forEach(row => row.forEach(node => {
-        node.addEventListener('mousedown', function() {
-            isDrawing = true;
-        });
-        node.addEventListener('mousemove', function() {
-            if(isDrawing) {
-                this.style.backgroundColor = 'black';
-            }
-        });
-        node.addEventListener('mouseup', function() {
-            isDrawing = false;
-        });
-    }));
-});
-
-dfsBtn.addEventListener('click', function() {
-    let prev = [];
-
-    for(let i = 0; i < n*n; i++) {
-        prev.push(null);
-    }
-
-    dfs(start, prev, null);
-
-    setTimeout(() => {
-        let i = Number(end.getAttribute('i'));
-        let j = Number(end.getAttribute('j'));
-        let curr = prev[i*n + j];
-        let path = [end];
-
-        delay = 50;
-        while(curr !== null) {
-            path.push(curr);
-            i = Number(curr.getAttribute('i'));
-            j = Number(curr.getAttribute('j'));
-            curr = prev[i*n + j];
-        }
-
-        path = path.reverse();
-        path.forEach(node => {
-            node.classList.add('path');
-            node.style.cssText = `background-color: rgb(0, 217, 255); animation-name: path; animation-delay: ${delay}ms;`;
-            delay += 50;
-        });
-    }, delayD);
-});
-
-bfsBtn.addEventListener('click', function() {
-    bfs(start);
-});
-
-for(let i = 0; i < n; i++) {
+for(let i = 0; i < rows; i++) {
     let row = [];
-    let rowV = [];
-    for(let j = 0; j < n; j++) {
+    let rowVisited = [];
+    for(let j = 0; j < cols; j++) {
         const node = document.createElement('div');
         node.classList.add('node');
         node.setAttribute('i', i);
         node.setAttribute('j', j);
+        node.setAttribute('draggable', true);
         graph.appendChild(node);
-        node.addEventListener('click', select);
-        node.addEventListener('click', function() {
-            console.log(this);
-        });
+
+        node.addEventListener('dragover', dragover_handler);
+        node.addEventListener('drop', drop_handler);
+
         row.push(node);
-        rowV.push(0);
+        rowVisited.push(false);
     }
     nodes.push(row);
-    visited.push(rowV);
+    visited.push(rowVisited);
 }
 
-function select(e) {
-    if(!start) {
+let start = nodes[15][20];
+const startIcon = document.querySelector('#start');
+nodes[15][20].appendChild(startIcon);
+
+let end = nodes[15][40];
+const endIcon = document.querySelector('#end');
+nodes[15][40].appendChild(endIcon);
+
+startIcon.addEventListener('dragstart', dragstart_handler);
+endIcon.addEventListener('dragstart', dragstart_handler)
+
+function dragstart_handler(ev) {
+    ev.dataTransfer.setData("application/my-app", ev.target.id);
+    ev.dataTransfer.effectAllowed = "move";
+}
+
+function dragover_handler(ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = "move";
+}
+
+function drop_handler(ev) {
+    ev.preventDefault();
+    const data = ev.dataTransfer.getData("application/my-app");
+    ev.target.appendChild(document.getElementById(data));
+    if(data === 'start') {
         start = this;
-        start.style.backgroundColor = 'green';
-    } else if(!end) {
+    } else {
         end = this;
-        end.style.backgroundColor = 'yellow';
     }
 }
-
-function dfs(node, prev, prevNode) {
-    let i = Number(node.getAttribute('i'));
-    let j = Number(node.getAttribute('j'));
-
-    if(visited[i][j] === 1) return;
-
-    prev[i*n + j] = prevNode;
-
-    if(node === end) {
-        found = true;
-        return;
-    }
-
-    if(node !== start) {
-        node.style.cssText = `animation-name: search; animation-delay: ${delayD}ms;`;
-        delayD += 25;
-    }
-
-    visited[i][j] = 1;
-
-    //visit top [i-1][j]
-    if(!found && i-1 >= 0 && nodes[i-1][j].style.backgroundColor != 'black') {
-        dfs(nodes[i-1][j], prev, node);
-    }
-    //visit right [i][j+1]
-    if(!found && j+1 < n && nodes[i][j+1].style.backgroundColor != 'black') {
-        dfs(nodes[i][j+1], prev, node);
-    }
-    //visit bottom [i+1][j]
-    if(!found && i+1 < n && nodes[i+1][j].style.backgroundColor != 'black') {
-        dfs(nodes[i+1][j], prev, node);
-    }
-    //visit left [i][j-1]
-    if(!found && j-1 >= 0 && nodes[i][j-1].style.backgroundColor != 'black') {
-        dfs(nodes[i][j-1], prev, node);
-    }
-}
-
-function bfs(node) {
-    let Q = [node];
-    let prev = [];
-    let delay = 0;
-    let ptr = 0;
-
-    for(let i = 0; i < n*n; i++) {
-        prev.push(null);
-    }
-
-    while(ptr !== Q.length) {
-        let curr = Q[ptr++];
-        let i = Number(curr.getAttribute('i'));
-        let j = Number(curr.getAttribute('j'));
-
-        if(curr === end) {
-            break;
-        }
-
-        if(curr !== start) {
-            curr.style.cssText = `animation-name: search; animation-delay: ${delay}ms;`;
-            delay += 5;
-        }
-
-        visited[i][j] = 1;
-
-        //visit top [i-1][j]
-        if(i-1 >= 0 && nodes[i-1][j].style.backgroundColor != 'black' && visited[i-1][j] === 0) {
-            Q.push(nodes[i-1][j]);
-            prev[(i-1)*n + j] = curr;
-            visited[i-1][j] = 1;
-        }
-        //visit right [i][j+1]
-        if(j+1 < n && nodes[i][j+1].style.backgroundColor != 'black' && visited[i][j+1] === 0) {
-            Q.push(nodes[i][j+1]);
-            prev[i*n + j+1] = curr;
-            visited[i][j+1] = 1;
-        }
-        //visit bottom [i+1][j]
-        if(i+1 < n && nodes[i+1][j].style.backgroundColor != 'black' && visited[i+1][j] === 0) {
-            Q.push(nodes[i+1][j]);
-            prev[(i+1)*n + j] = curr;
-            visited[i+1][j] = 1;
-        }
-        //visit left [i][j-1]
-        if(j-1 >= 0 && nodes[i][j-1].style.backgroundColor != 'black' && visited[i][j-1] === 0) {
-            Q.push(nodes[i][j-1]);
-            prev[i*n + j-1] = curr;
-            visited[i][j+1] = 1;
-        }
-    }
-
-    setTimeout(() => {
-        let i = Number(end.getAttribute('i'));
-        let j = Number(end.getAttribute('j'));
-        let curr = prev[i*n + j];
-        let path = [end];
-
-        delay = 50;
-        while(curr !== null) {
-            path.push(curr);
-            i = Number(curr.getAttribute('i'));
-            j = Number(curr.getAttribute('j'));
-            curr = prev[i*n + j];
-        }
-
-        path = path.reverse();
-        path.forEach(node => {
-            node.classList.add('path');
-            node.style.cssText = `background-color: rgb(0, 217, 255); animation-name: path; animation-delay: ${delay}ms;`;
-            delay += 50;
-        });
-    }, delay+500);
-}
-
-
-
