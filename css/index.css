@@ -4,13 +4,53 @@ html {
 
 body {
     height: 100%;
+    color: rgb(219, 219, 219);
+    background-color: rgb(104, 133, 156);
+}
+
+h1 {
+    display: inline;
+    margin-left: 5px;
+}
+
+button, select {
+    width: 180px;
+    height: 50px;
+    background-color: rgb(14, 18, 24);
+    font-size: 13pt;
+    font-weight:bolder;
+    color: rgb(219, 219, 219);
+    border: none;
+    cursor: pointer;
+}
+
+button:focus, select:focus {
+    outline: none;
+}
+
+button:hover {
+    color:rgb(0, 155, 103)
+}
+
+#visualize {
+    background-color: rgb(0, 155, 103);
+    border-radius: 5px;
+}
+
+#visualize:hover {
+    background-color: rgb(0, 126, 84);
+    color:rgb(219, 219, 219)
+}
+
+#clearPath {
+    margin-right: 5px;
 }
 
 #container {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     border: 1px solid black;
 }
@@ -18,34 +58,38 @@ body {
 #header {
     width: 100%;
     height: 75px;
-    margin-bottom: 10px;
-    border: 1px solid red;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(14, 18, 24);
 }
 
 #graph {
+    margin-bottom: 5px;
     display: grid;
     grid-template-columns: repeat(62, 1fr);
     grid-template-rows: repeat(31, 1fr);
     width: 98%;
-    height: 90%;
-    border: 1px solid #C3CCD4;
+    height: 85%;
+    border: 1px solid rgb(14, 18, 24);
 }
 
 .node {
     height: 100%;
-    border: 1px solid #C3CCD4;
+    border: 1px solid rgb(14, 18, 24);
     display: flex;
     justify-content: center;
     align-items: center;
-    animation-timing-function: ease-in;
+    animation-timing-function: ease-out;
     animation-fill-mode: forwards;
-    animation-duration: .5s;
+    animation-duration: 1.5s;
     outline: none;
 }
 
 img {
-    height: 100%;
-    width: 100%;
+    height: 95%;
+    width: 95%;
     -khtml-user-select: none;
     -o-user-select: none;
     -moz-user-select: none;
@@ -64,20 +108,20 @@ img {
 
 @keyframes search {
     0% {
-        background-color: rgb(229, 255, 0);
-    }
-    10% {
-        transform: scale(0.0);
+        transform: scale(0.3);
         border-radius: 100%;
+        background-color: rgb(0, 78, 97);
     }
-    20% {
-        background-color: rgb(10, 59, 68);
+    50% {
+        background-color: rgb(0, 145, 182);
     }
     75% {
-        background-color: rgb(0, 95, 112);
+        background-color: rgb(0, 255, 115);
+        transform: scale(1.2);
     }
     100% {
-        background-color: rgb(0, 217, 255);
+        transform: scale(1.0);
+        background-color: rgb(0, 238, 255);
     }
 }
 

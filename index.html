@@ -8,13 +8,15 @@
     <body>
         <div id="container">
             <div id="header">
-                <select id="algorithmSelection">
-                    <option>Breadth-First Search</option>
-                    <option>Depth-First Search</option>
+                <h1>Algorithm Visualizer</h1>
+                <select id="algorithm-select">
+                    <option value="BFS">Breadth-First Search</option>
+                    <option value="DFS">Depth-First Search</option>
                 </select>
-                <button id="visualize">Visualize</button>
+                <button id="visualize">Visualize <span id="button-span">BFS</span></button>
                 <button id="clearBoard">Clear Graph</button>
                 <button id="clearWalls">Clear Walls</button>
+                <button id="clearPath">Clear Path</button>
             </div>
             <div id="graph">
             </div>
